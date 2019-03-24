@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,8 +44,22 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void createAccount() {
+        String username=_txtusername.getText().toString();
         String email=_txtemail.getText().toString();
         String password=_txtpass.getText().toString();
+
+        if(TextUtils.isEmpty(username)){
+            Toast.makeText(this,"Please enter username",Toast.LENGTH_LONG).show();
+            return;
+        }
+        if(TextUtils.isEmpty(email)){
+            Toast.makeText(this,"Please enter email",Toast.LENGTH_LONG).show();
+            return;
+        }
+        if(TextUtils.isEmpty(password)){
+            Toast.makeText(this,"Please enter password",Toast.LENGTH_LONG).show();
+            return;
+        }
 
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -58,8 +73,12 @@ public class CreateAccount extends AppCompatActivity {
                             Intent intent = new Intent(CreateAccount.this, MainMenu.class);
                             startActivity(intent);
                         }
+                        else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(CreateAccount.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
 
-
+                        }
                     }
                 });
         }

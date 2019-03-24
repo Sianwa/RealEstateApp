@@ -1,7 +1,8 @@
 package com.example.qra.realestateapp;
 
-import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,18 +18,29 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+
 
 public class MainMenu extends AppCompatActivity {
     RecyclerView mRecyclerview;
     FirebaseDatabase mFiredasedb;
     DatabaseReference mRef;
+    FloatingActionButton myFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainmenu);
+        //FAB
+        myFab =findViewById(R.id.fab1);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainMenu.this,SearchPage.class);
+                startActivity(intent);
+            }
+        });
 
         //ActionBar
         ActionBar actionBar =getSupportActionBar();
@@ -57,10 +69,24 @@ public class MainMenu extends AppCompatActivity {
                 new FirebaseRecyclerAdapter<Model, ViewHolders>(options) {
 
                     @Override
-                    protected void onBindViewHolder(@NonNull ViewHolders holder, int position, @NonNull Model model) {
+                    protected void onBindViewHolder(@NonNull ViewHolders holder, final int position, @NonNull Model model) {
                     holder.mTitleView.setText(model.getTitle());
                     Picasso.get().load(model.getImage()).into(holder.mImageView);
-                    holder.mDescriptionView.setText((model.getDescription()));
+               //TODO holder.mDescriptionView.setText((model.getDescription()));
+
+
+                    //itemClickListener using itemView obj in viewholder
+                        //if user clicks anywhere on the item
+                       holder.itemView.setOnClickListener(new View.OnClickListener() {
+                           @Override
+                           public void onClick(View v) {
+                               String view_property = getRef(position).getKey();
+
+                               Intent intent =new Intent(MainMenu.this,result.class);
+                               intent.putExtra("view_property",view_property);
+                               startActivity(intent);
+                           }
+                       });
                     }
 
                     @NonNull
@@ -91,5 +117,10 @@ public class MainMenu extends AppCompatActivity {
             mImageView = mView.findViewById(R.id.mImage);
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }
